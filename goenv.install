@@ -1,0 +1,22 @@
+post_install() {
+  ln -sf /usr/lib/goenv/libexec/goenv /usr/bin/goenv
+
+  echo
+  echo  "  Set the GOENV_ROOT environment variable (in a permanent manner according to your"
+  echo  "  shell) to the location where go versions should be installed."
+  echo
+  echo  "  Add the following to your shell startup script (YMMV):"
+  echo
+  echo  "    eval \"\$(goenv init -)\""
+  echo  "    export PATH=\"\$GOROOT/bin\${PATH:+:\${PATH}}\""
+  echo  "    export PATH=\"\$(PATH:+\${PATH}:}\$GOPATH/bin\""
+  echo
+}
+
+post_upgrade() {
+  ln -sf /usr/lib/goenv/libexec/goenv /usr/bin/goenv
+}
+
+post_remove() {
+  rm -f /usr/bin/goenv
+}

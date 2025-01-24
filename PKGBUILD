@@ -1,19 +1,55 @@
+# Maintainer: Sam Wilson <swilson0702@gmail.com>
+
 pkgname=goenv
-pkgver=2.0.0beta11
+pkgver=2.2.18
 pkgrel=1
 pkgdesc="Like pyenv and rbenv, but for Go."
-arch=('i686' 'x86_64')
-url="https://github.com/syndbg/goenv"
+arch=('any')
+depends=('bash')
+checkdepends=('git','make')
+url="https://github.com/go-nv/goenv"
 license=('MIT')
-# https://github.com/syndbg/goenv/archive/2.0.0beta11.tar.gz
-source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/${pkgver}.tar.gz")
-md5sums=('971e0e2cf572af5dabb6f7c8eb7b1be0')
+source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/${pkgver}.tar.gz")
+md5sums=('789a9d83cb97d7cd2f22f748cd46d9bd')
+install=goenv.install
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make test || true
+}
 
 package() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  for file in $(ls -1 libexec/); do
-    install -D -m755 libexec/${file} "${pkgdir}/usr/lib/goenv/libexec/${file}"
+  install -d "${pkgdir}/usr/lib/goenv/libexec"
+  for file in libexec/*; do
+    install -D -m755 "$file" "${pkgdir}/usr/lib/goenv/libexec/"
   done
 
+  install -D -m644 completions/goenv.bash "${pkgdir}/usr/share/bash-completions/completions/goenv"
+  install -D -m644 completions/goenv.zsh "${pkgdir}/usr/share/zsh/site-functions/_goenv"
+  install -D -m644 completions/goenv.fish "${pkgdir}/usr/share/fish/vendor_completions.d/goenv.fish"
+
+  license_files=(
+    "LICENSE"
+  )
+  install -d "${pkgdir}/usr/share/licenses/goenv/"
+  for file in "${license_files[@]}"; do
+    install -D -m644 "$file" "${pkgdir}/usr/share/licenses/goenv/"
+  done
+
+  doc_files=(
+    "ADVANCED_CONFIGURATION.md"
+    "CHANGELOG.md"
+    "COMMANDS.md"
+    "CONTRIBUTING.md"
+    "ENVIRONMENT_VARIABLES.md"
+    "HOW_IT_WORKS.md"
+    "README.md"
+  )
+  install -d "${pkgdir}/usr/share/doc/goenv/"
+  for file in "${doc_files[@]}"; do
+    install -D -m644 "$file" "${pkgdir}/usr/share/doc/goenv/"
+  done
 }
+
