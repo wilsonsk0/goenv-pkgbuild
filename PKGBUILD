@@ -6,7 +6,7 @@ pkgrel=1
 pkgdesc="Like pyenv and rbenv, but for Go."
 arch=('any')
 depends=('bash')
-checkdepends=('git','make')
+checkdepends=('git' 'make')
 url="https://github.com/go-nv/goenv"
 license=('MIT')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/${pkgver}.tar.gz")
@@ -21,10 +21,11 @@ check() {
 package() {
   cd "${srcdir}/${pkgname}-${pkgver}"
 
-  install -d "${pkgdir}/usr/lib/goenv/libexec"
-  for file in libexec/*; do
-    install -D -m755 "$file" "${pkgdir}/usr/lib/goenv/libexec/"
-  done
+  install -d "${pkgdir}/usr/lib/goenv/"
+  cp -r libexec "${pkgdir}/usr/lib/goenv/"
+  cp -r plugins "${pkgdir}/usr/lib/goenv/"
+
+  install -D -m644 APP_VERSION "${pkgdir}/usr/lib/goenv/"
 
   install -D -m644 completions/goenv.bash "${pkgdir}/usr/share/bash-completions/completions/goenv"
   install -D -m644 completions/goenv.zsh "${pkgdir}/usr/share/zsh/site-functions/_goenv"
